@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Scout</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header */
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header h1 {
+            font-size: 20px;
+            color: #f0f6fc;
+            font-weight: 600;
+        }
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Collectors status bar */
+        .collectors-bar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 10px 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .collectors-bar-label {
+            font-size: 11px;
+            color: #484f58;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 4px;
+        }
+        .collector-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            font-size: 12px;
+        }
+        .collector-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-idle { background: #484f58; }
+        .dot-collecting {
+            background: #58a6ff;
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+        .dot-analyzing {
+            background: #d29922;
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+        .dot-error { background: #da3633; }
+        .dot-warning { background: #d29922; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .collector-name {
+            color: #c9d1d9;
+            font-weight: 500;
+        }
+        .collector-info {
+            color: #484f58;
+            font-size: 11px;
+        }
+
+        /* Filters */
+        .filters {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-group label {
+            font-size: 12px;
+            color: #8b949e;
+            white-space: nowrap;
+        }
+        select, input[type="range"] {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+        }
+        select:focus { border-color: #58a6ff; }
+        .score-display {
+            font-size: 13px;
+            color: #58a6ff;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* Content */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 24px;
+        }
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .feed-header h2 {
+            font-size: 16px;
+            color: #f0f6fc;
+        }
+        .feed-count {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        /* Cards */
+        .ideas-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .idea-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .idea-card:hover {
+            border-color: #58a6ff;
+            background: #1c2129;
+        }
+        .score-badge {
+            min-width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .score-high { background: #238636; }
+        .score-mid { background: #9e6a03; }
+        .score-low { background: #da3633; }
+        .score-none { background: #30363d; color: #8b949e; }
+
+        .idea-body { flex: 1; min-width: 0; }
+        .idea-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .idea-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        /* Source badges */
+        .badge-reddit { background: #ff4500; color: #fff; }
+        .badge-github { background: #6e7681; color: #fff; }
+        .badge-polymarket { background: #7c3aed; color: #fff; }
+        .badge-hackernews { background: #c45a00; color: #fff; }
+        .badge-rss { background: #1d4ed8; color: #fff; }
+        .badge-twitter { background: #1da1f2; color: #fff; }
+        .badge-telegram { background: #0088cc; color: #fff; }
+        /* Category badges */
+        .badge-strategy { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
+        .badge-tool { background: rgba(163, 113, 247, 0.15); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.3); }
+        .badge-niche { background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); }
+        .badge-news { background: rgba(210, 153, 34, 0.15); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.3); }
+        .badge-irrelevant { background: rgba(139, 148, 158, 0.15); color: #8b949e; border: 1px solid rgba(139, 148, 158, 0.3); }
+
+        .idea-summary {
+            font-size: 13px;
+            color: #8b949e;
+            line-height: 1.5;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .idea-date {
+            font-size: 11px;
+            color: #484f58;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #484f58;
+        }
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #8b949e;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8b949e;
+        }
+
+        @media (max-width: 640px) {
+            .header { padding: 12px 16px; }
+            .filters { padding: 10px 16px; }
+            .content { padding: 16px; }
+            .idea-card { padding: 12px 14px; }
+            .header-stats { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Alpha Scout</h1>
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="stat-total">{{ stats.total }}</div>
+                <div class="stat-label">Total Ideas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="stat-analyzed">{{ stats.analyzed }}</div>
+                <div class="stat-label">Analyzed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="stat-hot">{{ stats.hot_ideas }}</div>
+                <div class="stat-label">Hot</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="stat-avg">{{ stats.avg_score }}</div>
+                <div class="stat-label">Avg Score</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="collectors-bar" id="collectors-bar">
+        <span class="collectors-bar-label">Sources</span>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="filter-category">Category</label>
+            <select id="filter-category">
+                <option value="">All</option>
+                <option value="strategy">Strategy</option>
+                <option value="tool">Tool</option>
+                <option value="niche">Niche</option>
+                <option value="news">News</option>
+                <option value="irrelevant">Irrelevant</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-source">Source</label>
+            <select id="filter-source">
+                <option value="">All</option>
+                <option value="reddit">Reddit</option>
+                <option value="github">GitHub</option>
+                <option value="polymarket">Polymarket</option>
+                <option value="hackernews">HackerNews</option>
+                <option value="rss">RSS</option>
+                <option value="twitter">Twitter</option>
+                <option value="telegram">Telegram</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-score">Min Score</label>
+            <input type="range" id="filter-score" min="0" max="10" step="0.5" value="0">
+            <span class="score-display" id="score-value">0</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="feed-header">
+            <h2>Ideas Feed</h2>
+            <span class="feed-count" id="feed-count"></span>
+        </div>
+        <div class="ideas-feed" id="ideas-feed">
+            <div class="loading">Loading ideas...</div>
+        </div>
+    </div>
+
+    <script>
+        const feed = document.getElementById('ideas-feed');
+        const categorySelect = document.getElementById('filter-category');
+        const sourceSelect = document.getElementById('filter-source');
+        const scoreSlider = document.getElementById('filter-score');
+        const scoreValue = document.getElementById('score-value');
+        const feedCount = document.getElementById('feed-count');
+
+        function scoreClass(score) {
+            if (score >= 8) return 'score-high';
+            if (score >= 6) return 'score-mid';
+            if (score > 0) return 'score-low';
+            return 'score-none';
+        }
+
+        function formatDate(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            const now = new Date();
+            const diff = (now - d) / 1000;
+            if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+            return Math.floor(diff / 86400) + 'd ago';
+        }
+
+        function escHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function createCard(idea) {
+            const card = document.createElement('div');
+            card.className = 'idea-card';
+            card.addEventListener('click', function() {
+                location.href = '/idea/' + encodeURIComponent(idea.id);
+            });
+
+            const score = idea.final_score > 0 ? idea.final_score.toFixed(1) : '-';
+            const cls = scoreClass(idea.final_score);
+
+            const scoreBadge = document.createElement('div');
+            scoreBadge.className = 'score-badge ' + cls;
+            scoreBadge.textContent = score;
+
+            const body = document.createElement('div');
+            body.className = 'idea-body';
+
+            const title = document.createElement('div');
+            title.className = 'idea-title';
+            title.textContent = idea.title || 'Untitled';
+
+            const meta = document.createElement('div');
+            meta.className = 'idea-meta';
+
+            const srcBadge = document.createElement('span');
+            srcBadge.className = 'badge badge-' + idea.source;
+            srcBadge.textContent = idea.source;
+
+            const catBadge = document.createElement('span');
+            catBadge.className = 'badge badge-' + idea.category;
+            catBadge.textContent = idea.category;
+
+            const date = document.createElement('span');
+            date.className = 'idea-date';
+            date.textContent = formatDate(idea.created_at);
+
+            meta.appendChild(srcBadge);
+            meta.appendChild(catBadge);
+            meta.appendChild(date);
+
+            const summary = document.createElement('div');
+            summary.className = 'idea-summary';
+            summary.textContent = idea.summary || '';
+
+            body.appendChild(title);
+            body.appendChild(meta);
+            body.appendChild(summary);
+
+            card.appendChild(scoreBadge);
+            card.appendChild(body);
+
+            return card;
+        }
+
+        async function loadIdeas() {
+            const params = new URLSearchParams();
+            const cat = categorySelect.value;
+            const src = sourceSelect.value;
+            const minScore = parseFloat(scoreSlider.value);
+
+            if (cat) params.set('category', cat);
+            if (src) params.set('source', src);
+            if (minScore > 0) params.set('min_score', minScore);
+            params.set('limit', '100');
+
+            try {
+                const resp = await fetch('/api/ideas?' + params.toString());
+                if (!resp.ok) throw new Error('API error');
+                const ideas = await resp.json();
+
+                feedCount.textContent = ideas.length + ' ideas';
+
+                feed.replaceChildren();
+
+                if (ideas.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-state';
+                    const h3 = document.createElement('h3');
+                    h3.textContent = 'No ideas found';
+                    const p = document.createElement('p');
+                    p.textContent = 'Try adjusting filters or wait for new data';
+                    empty.appendChild(h3);
+                    empty.appendChild(p);
+                    feed.appendChild(empty);
+                    return;
+                }
+
+                ideas.forEach(function(idea) {
+                    feed.appendChild(createCard(idea));
+                });
+            } catch (err) {
+                feed.replaceChildren();
+                const empty = document.createElement('div');
+                empty.className = 'empty-state';
+                const h3 = document.createElement('h3');
+                h3.textContent = 'Error loading ideas';
+                empty.appendChild(h3);
+                feed.appendChild(empty);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const resp = await fetch('/api/stats');
+                if (!resp.ok) return;
+                const s = await resp.json();
+                document.getElementById('stat-total').textContent = s.total;
+                document.getElementById('stat-analyzed').textContent = s.analyzed;
+                document.getElementById('stat-hot').textContent = s.hot_ideas;
+                document.getElementById('stat-avg').textContent = s.avg_score;
+            } catch (_) {}
+        }
+
+        scoreSlider.addEventListener('input', function() {
+            scoreValue.textContent = scoreSlider.value;
+        });
+
+        categorySelect.addEventListener('change', loadIdeas);
+        sourceSelect.addEventListener('change', loadIdeas);
+        scoreSlider.addEventListener('change', loadIdeas);
+
+        const COLLECTOR_NAMES = ['reddit', 'github', 'polymarket', 'hackernews', 'rss', 'twitter'];
+        const collectorsBar = document.getElementById('collectors-bar');
+
+        function dotClass(status, warning) {
+            if (status === 'collecting') return 'dot-collecting';
+            if (status === 'analyzing') return 'dot-analyzing';
+            if (status === 'error') return 'dot-error';
+            if (warning) return 'dot-warning';
+            return 'dot-idle';
+        }
+
+        function statusText(c) {
+            if (!c) return 'waiting';
+            if (c.status === 'collecting') return 'collecting...';
+            if (c.status === 'analyzing') return 'analyzing ' + c.items_count;
+            if (c.status === 'error') return 'error';
+            var text = c.items_count > 0 ? c.items_count + ' items' : 'idle';
+            if (c.method) text += ' [' + c.method + ']';
+            return text;
+        }
+
+        function renderCollectors(data) {
+            // Keep the label, clear indicators
+            while (collectorsBar.children.length > 1) {
+                collectorsBar.removeChild(collectorsBar.lastChild);
+            }
+            COLLECTOR_NAMES.forEach(function(name) {
+                const c = data[name];
+                const el = document.createElement('div');
+                el.className = 'collector-indicator';
+
+                const dot = document.createElement('div');
+                dot.className = 'collector-dot ' + dotClass(c ? c.status : 'idle', c ? c.warning : '');
+                if (c && c.warning) el.title = c.warning;
+
+                const nameEl = document.createElement('span');
+                nameEl.className = 'collector-name';
+                nameEl.textContent = name;
+
+                const info = document.createElement('span');
+                info.className = 'collector-info';
+                info.textContent = statusText(c);
+
+                el.appendChild(dot);
+                el.appendChild(nameEl);
+                el.appendChild(info);
+                collectorsBar.appendChild(el);
+            });
+        }
+
+        async function loadCollectors() {
+            try {
+                const resp = await fetch('/api/collectors');
+                if (!resp.ok) return;
+                renderCollectors(await resp.json());
+            } catch (_) {}
+        }
+
+        loadIdeas();
+        loadCollectors();
+
+        setInterval(function() {
+            loadIdeas();
+            loadStats();
+            loadCollectors();
+        }, 10000);
+    </script>
+</body>
+</html>

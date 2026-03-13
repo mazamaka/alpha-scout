@@ -1,0 +1,25 @@
+services:
+  alpha-scout:
+    build: .
+    container_name: alpha-scout
+    restart: unless-stopped
+    ports:
+      - "8878:8900"
+    volumes:
+      - scout-data:/app/data
+      - scout-logs:/app/logs
+      - ${HOME}/.claude/.credentials.json:/home/botuser/.claude/.credentials.json:ro
+    environment:
+      - TZ=UTC
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8900/api/stats"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  scout-data:
+  scout-logs:

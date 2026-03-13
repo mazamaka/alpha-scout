@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ idea.title }} - Alpha Scout</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header */
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header a.back {
+            font-size: 14px;
+            color: #8b949e;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .header a.back:hover { color: #58a6ff; }
+        .header h1 {
+            font-size: 18px;
+            color: #f0f6fc;
+            font-weight: 600;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Title section */
+        .idea-header {
+            margin-bottom: 24px;
+        }
+        .idea-header h2 {
+            font-size: 24px;
+            color: #f0f6fc;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .idea-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge-reddit { background: #ff4500; color: #fff; }
+        .badge-github { background: #6e7681; color: #fff; }
+        .badge-polymarket { background: #7c3aed; color: #fff; }
+        .badge-hackernews { background: #c45a00; color: #fff; }
+        .badge-rss { background: #1d4ed8; color: #fff; }
+        .badge-twitter { background: #1da1f2; color: #fff; }
+        .badge-telegram { background: #0088cc; color: #fff; }
+        .badge-strategy { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
+        .badge-tool { background: rgba(163, 113, 247, 0.15); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.3); }
+        .badge-niche { background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); }
+        .badge-news { background: rgba(210, 153, 34, 0.15); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.3); }
+        .badge-irrelevant { background: rgba(139, 148, 158, 0.15); color: #8b949e; border: 1px solid rgba(139, 148, 158, 0.3); }
+
+        .meta-text {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        /* Score section */
+        .score-section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .score-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .score-big {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .score-high { color: #3fb950; }
+        .score-mid { color: #d29922; }
+        .score-low { color: #f85149; }
+        .score-none { color: #8b949e; }
+        .score-label {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .score-item {
+            background: #0d1117;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+        .score-item-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+        .score-item-label {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        .score-bar {
+            height: 4px;
+            background: #21262d;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        /* Sections */
+        .section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            font-size: 14px;
+            color: #f0f6fc;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section p, .section li {
+            font-size: 14px;
+            color: #c9d1d9;
+            line-height: 1.7;
+        }
+        .section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .section ul li {
+            padding: 6px 0;
+            border-bottom: 1px solid #21262d;
+            padding-left: 16px;
+            position: relative;
+        }
+        .section ul li:last-child { border-bottom: none; }
+        .section ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #58a6ff;
+        }
+
+        .no-analysis {
+            text-align: center;
+            padding: 40px;
+            color: #484f58;
+        }
+        .no-analysis h3 {
+            color: #8b949e;
+            text-transform: none;
+        }
+
+        .source-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 14px;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 640px) {
+            .content { padding: 16px; }
+            .scores-grid { grid-template-columns: 1fr; }
+            .score-big { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a class="back" href="/">&#8592; Dashboard</a>
+        <h1>Idea Detail</h1>
+    </div>
+
+    <div class="content">
+        <div class="idea-header">
+            <h2>{{ idea.title }}</h2>
+            <div class="idea-meta">
+                <span class="badge badge-{{ idea.source }}">{{ idea.source }}</span>
+                <span class="badge badge-{{ idea.category }}">{{ idea.category }}</span>
+                {% if idea.author %}
+                <span class="meta-text">by {{ idea.author }}</span>
+                {% endif %}
+                <span class="meta-text">{{ idea.created_at[:10] if idea.created_at else '' }}</span>
+            </div>
+            {% if idea.url %}
+            <a class="source-link" href="{{ idea.url }}" target="_blank" rel="noopener">View Source</a>
+            {% endif %}
+        </div>
+
+        {% if idea.summary %}
+        <div class="section">
+            <h3>Summary</h3>
+            <p>{{ idea.summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if idea.ai_score %}
+        <div class="score-section">
+            <div class="score-header">
+                {% set score = idea.final_score %}
+                <div class="score-big {% if score >= 8 %}score-high{% elif score >= 6 %}score-mid{% elif score > 0 %}score-low{% else %}score-none{% endif %}">
+                    {{ '%.1f'|format(score) }}
+                </div>
+                <div>
+                    <div style="color: #f0f6fc; font-weight: 600;">Final Score</div>
+                    <div class="score-label">Weighted combination of ROI, Feasibility, Complexity</div>
+                </div>
+            </div>
+            <div class="scores-grid">
+                <div class="score-item">
+                    <div class="score-item-value">{{ '%.1f'|format(idea.ai_score.roi_potential) }}</div>
+                    <div class="score-item-label">ROI Potential</div>
+                    <div class="score-bar">
+                        <div class="score-bar-fill" style="width: {{ idea.ai_score.roi_potential * 10 }}%; background: #3fb950;"></div>
+                    </div>
+                </div>
+                <div class="score-item">
+                    <div class="score-item-value">{{ '%.1f'|format(idea.ai_score.feasibility) }}</div>
+                    <div class="score-item-label">Feasibility</div>
+                    <div class="score-bar">
+                        <div class="score-bar-fill" style="width: {{ idea.ai_score.feasibility * 10 }}%; background: #58a6ff;"></div>
+                    </div>
+                </div>
+                <div class="score-item">
+                    <div class="score-item-value">{{ '%.1f'|format(idea.ai_score.complexity) }}</div>
+                    <div class="score-item-label">Complexity</div>
+                    <div class="score-bar">
+                        <div class="score-bar-fill" style="width: {{ idea.ai_score.complexity * 10 }}%; background: #d29922;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if idea.ai_score.reasoning %}
+        <div class="section">
+            <h3>Reasoning</h3>
+            <p>{{ idea.ai_score.reasoning }}</p>
+        </div>
+        {% endif %}
+
+        {% if idea.ai_score.strategy_description %}
+        <div class="section">
+            <h3>Strategy Description</h3>
+            <p>{{ idea.ai_score.strategy_description }}</p>
+        </div>
+        {% endif %}
+
+        {% if idea.ai_score.similar_bots %}
+        <div class="section">
+            <h3>Similar Bots / Projects</h3>
+            <ul>
+                {% for bot in idea.ai_score.similar_bots %}
+                <li>{{ bot }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if idea.ai_score.action_items %}
+        <div class="section">
+            <h3>Action Items</h3>
+            <ul>
+                {% for item in idea.ai_score.action_items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="section no-analysis">
+            <h3>Not yet analyzed</h3>
+            <p>This idea has not been processed by the AI analyzer yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
