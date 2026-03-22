@@ -5,3 +5,11 @@ __pycache__/
 data/
 logs/
 .ruff_cache/
+*.sqlite*
+twitter_cookies.json
+*.log
+.idea/
+.vscode/
+node_modules/
+*.pem
+*.key

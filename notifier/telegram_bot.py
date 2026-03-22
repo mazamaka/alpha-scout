@@ -3,12 +3,13 @@ from datetime import datetime, timezone
 
 import httpx
 
+from config import settings
 from storage.db import IdeaStorage
 from storage.models import Idea
 
 logger = logging.getLogger(__name__)
 
-SCOUT_URL = "https://scout.maxbob.xyz"
+SCOUT_URL = settings.scout_url
 
 
 def _score_bar(value: float, max_val: int = 10) -> str:

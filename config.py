@@ -83,6 +83,12 @@ class Settings(BaseSettings):
     telegram_bot_token: str = ""
     telegram_chat_ids: list[int] = []
 
+    # News Intelligence (optional, for enriched analysis)
+    news_intelligence_url: str = ""
+
+    # Scout URL (for Telegram bot links)
+    scout_url: str = "http://localhost:8900"
+
     # Web dashboard
     web_host: str = "0.0.0.0"
     web_port: int = 8900

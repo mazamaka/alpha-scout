@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 DEEP_ANALYSIS_CATEGORIES = {IdeaCategory.STRATEGY, IdeaCategory.NICHE}
 
-NEWS_INTELLIGENCE_URL = "http://127.0.0.1:8100/api/v1"
+NEWS_INTELLIGENCE_URL = settings.news_intelligence_url
 
 _CLAUDE_ENV: dict[str, str] | None = None
 
@@ -75,6 +75,8 @@ def _call_claude_sync(prompt: str, model: str, timeout: int = 120) -> str:
 
 async def _fetch_news_context(query: str) -> str:
     """Fetch relevant news from News Intelligence for enriching analysis."""
+    if not NEWS_INTELLIGENCE_URL:
+        return ""
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.get(

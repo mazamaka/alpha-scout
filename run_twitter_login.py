@@ -92,10 +92,7 @@ def main() -> None:
                 COOKIES_FILE.parent.mkdir(parents=True, exist_ok=True)
                 COOKIES_FILE.write_text(json.dumps(cookies, indent=2))
                 print(f"\nSUCCESS! {len(cookies)} cookies saved to {COOKIES_FILE}")
-                print("Now copy cookies to server:")
-                print(
-                    f"  scp {COOKIES_FILE} root@94.156.232.242:/opt/alpha-scout/data/"
-                )
+                print("Now copy cookies to your server's data/ directory.")
             else:
                 print(f"\nFAILED: auth cookies missing. Got: {list(cookies.keys())}")
                 page.screenshot(path="data/twitter_debug_3_failed.png")
